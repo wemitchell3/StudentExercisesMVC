@@ -89,13 +89,7 @@ namespace StudentExercisesMVC.Controllers
                 {
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        //cmd.CommandText = @"INSERT INTO Instructor ( FirstName )
-                        //                    VALUES ( @FirstName )";
-                        //cmd.Parameters.Add(new SqlParameter("@FirstName", instructor.FirstName));
-                        //cmd.ExecuteNonQuery();
-
-                        //return RedirectToAction(nameof(Index));
+                    {                        
                         cmd.CommandText = @"INSERT INTO Instructor ( FirstName, LastName, SlackHandle, InstructorSpecialty, CohortId )
                                             VALUES ( @firstName, @lastName, @slackHandle, @instructorSpecialty, @cohortId )";
                         cmd.Parameters.Add(new SqlParameter("@firstName", instructor.FirstName));
