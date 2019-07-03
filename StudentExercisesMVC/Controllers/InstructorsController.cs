@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -84,13 +81,33 @@ namespace StudentExercisesMVC.Controllers
         // POST: Instuctors/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Instructor instructor)
         {
             try
             {
-                // TODO: Add insert logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        //cmd.CommandText = @"INSERT INTO Instructor ( FirstName )
+                        //                    VALUES ( @FirstName )";
+                        //cmd.Parameters.Add(new SqlParameter("@FirstName", instructor.FirstName));
+                        //cmd.ExecuteNonQuery();
 
-                return RedirectToAction(nameof(Index));
+                        //return RedirectToAction(nameof(Index));
+                        cmd.CommandText = @"INSERT INTO Instructor ( FirstName, LastName, SlackHandle, InstructorSpecialty, CohortId )
+                                            VALUES ( @firstName, @lastName, @slackHandle, @instructorSpecialty, @cohortId )";
+                        cmd.Parameters.Add(new SqlParameter("@firstName", instructor.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", instructor.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@slackHandle", instructor.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@instructorSpecialty", instructor.InstructorSpecialty));
+                        cmd.Parameters.Add(new SqlParameter("@cohortId", instructor.CohortId));
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
@@ -101,19 +118,40 @@ namespace StudentExercisesMVC.Controllers
         // GET: Instuctors/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Instructor instructor = GetInstructorByID(id);
+            return View(instructor);
         }
 
         // POST: Instuctors/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Instructor instructor)
         {
             try
             {
-                // TODO: Add update logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Instructor
+                                            SET FirstName=@FirstName,
+                                                LastName=@LastName,
+                                                SlackHandle=@SlackHandle,
+                                                InstructorSpecialty=@InstructorSpecialty,
+                                                CohortId=@CohortId
+                                            WHERE Id=@Id";
+                        cmd.Parameters.Add(new SqlParameter("@FirstName", instructor.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@LastName", instructor.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@SlackHandle", instructor.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@InstructorSpecialty", instructor.InstructorSpecialty));
+                        cmd.Parameters.Add(new SqlParameter("@CohortId", instructor.CohortId));
+                        cmd.Parameters.Add(new SqlParameter("@Id", id));
 
-                return RedirectToAction(nameof(Index));
+                        cmd.ExecuteNonQuery();
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
@@ -124,19 +162,30 @@ namespace StudentExercisesMVC.Controllers
         // GET: Instuctors/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Instructor isntructor = GetInstructorByID(id);
+            return View(isntructor);
         }
 
         // POST: Instuctors/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirmed(int id, IFormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM Instructor WHERE Id=@Id";
 
-                return RedirectToAction(nameof(Index));
+                        cmd.Parameters.Add(new SqlParameter("@Id", id));
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {

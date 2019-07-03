@@ -90,10 +90,8 @@ namespace StudentExercisesMVC.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"INSERT INTO Student
-                ( FirstName, LastName, SlackHandle, CohortId )
-                VALUES
-                ( @firstName, @lastName, @slackHandle, @cohortId )";
+                        cmd.CommandText = @"INSERT INTO Student ( FirstName, LastName, SlackHandle, CohortId )
+                                            VALUES ( @firstName, @lastName, @slackHandle, @cohortId )";
                         cmd.Parameters.Add(new SqlParameter("@firstName", model.student.FirstName));
                         cmd.Parameters.Add(new SqlParameter("@lastName", model.student.LastName));
                         cmd.Parameters.Add(new SqlParameter("@slackHandle", model.student.SlackHandle));
@@ -128,8 +126,7 @@ namespace StudentExercisesMVC.Controllers
         public ActionResult Edit(int id, Student student)
         {
             try
-            {
-                // TODO: Add update logic here
+            {                
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
@@ -172,7 +169,6 @@ namespace StudentExercisesMVC.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
