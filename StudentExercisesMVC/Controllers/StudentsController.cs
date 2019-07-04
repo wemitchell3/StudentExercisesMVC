@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using StudentExercisesMVC.Models;
@@ -92,10 +91,10 @@ namespace StudentExercisesMVC.Controllers
                     {
                         cmd.CommandText = @"INSERT INTO Student ( FirstName, LastName, SlackHandle, CohortId )
                                             VALUES ( @firstName, @lastName, @slackHandle, @cohortId )";
-                        cmd.Parameters.Add(new SqlParameter("@firstName", model.student.FirstName));
-                        cmd.Parameters.Add(new SqlParameter("@lastName", model.student.LastName));
-                        cmd.Parameters.Add(new SqlParameter("@slackHandle", model.student.SlackHandle));
-                        cmd.Parameters.Add(new SqlParameter("@cohortId", model.student.CohortId));
+                        cmd.Parameters.Add(new SqlParameter("@firstName", model.Student.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", model.Student.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@slackHandle", model.Student.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@cohortId", model.Student.CohortId));
                         cmd.ExecuteNonQuery();
 
                         return RedirectToAction(nameof(Index));
@@ -113,9 +112,11 @@ namespace StudentExercisesMVC.Controllers
         {
             Student student = GetStudentByID(id);
             List<Cohort> cohorts = GetAllCohorts();
-            StudentEditViewModel viewModel = new StudentEditViewModel();
-            viewModel.Student = student;
-            viewModel.AvailableCohorts = cohorts;
+            StudentEditViewModel viewModel = new StudentEditViewModel
+            {
+                Student = student,
+                AvailableCohorts = cohorts
+            };
 
             return View(viewModel);
         }        

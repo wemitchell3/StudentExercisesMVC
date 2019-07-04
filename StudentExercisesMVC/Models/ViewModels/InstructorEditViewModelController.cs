@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace StudentExercisesMVC.Models.ViewModels
 {
-    public class StudentEditViewModel
+    public class InstructorEditViewModel
     {
-        public Student Student { get; set; }
+        public Instructor Instructor { get; set; }
         public List<Cohort> AvailableCohorts { get; set; }
         public List<SelectListItem> AvailableCohortsSelectList
         {

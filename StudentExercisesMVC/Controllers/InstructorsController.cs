@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using StudentExercisesMVC.Models;
+using StudentExercisesMVC.Models.ViewModels;
 
 namespace StudentExercisesMVC.Controllers
 {
@@ -113,7 +114,13 @@ namespace StudentExercisesMVC.Controllers
         public ActionResult Edit(int id)
         {
             Instructor instructor = GetInstructorByID(id);
-            return View(instructor);
+            List<Cohort> cohorts = GetAllCohorts();
+            InstructorEditViewModel viewModel = new InstructorEditViewModel
+            {
+                Instructor = instructor,
+                AvailableCohorts = cohorts
+            };
+            return View(viewModel);
         }
 
         // POST: Instuctors/Edit/5
@@ -156,14 +163,14 @@ namespace StudentExercisesMVC.Controllers
         // GET: Instuctors/Delete/5
         public ActionResult Delete(int id)
         {
-            Instructor isntructor = GetInstructorByID(id);
-            return View(isntructor);
+            Instructor instructor = GetInstructorByID(id);
+            return View(instructor);
         }
 
         // POST: Instuctors/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id, IFormCollection collection)
+        public ActionResult DeleteConfirmed(int id)
         {
             try
             {
@@ -224,6 +231,36 @@ namespace StudentExercisesMVC.Controllers
                     reader.Close();
 
                     return instructor;
+                }
+            }
+        }
+        private List<Cohort> GetAllCohorts()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT 
+                                            Id,
+                                            CohortName                                            
+                                        FROM Cohort
+                                        ";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<Cohort> cohorts = new List<Cohort>();
+                    while (reader.Read())
+                    {
+                        Cohort cohort = new Cohort
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            CohortName = reader.GetString(reader.GetOrdinal("CohortName"))
+                        };
+                        cohorts.Add(cohort);
+                    }
+
+                    reader.Close();
+
+                    return cohorts;
                 }
             }
         }

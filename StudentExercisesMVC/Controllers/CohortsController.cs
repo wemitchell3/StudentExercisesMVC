@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using StudentExercisesMVC.Models;
@@ -155,8 +151,11 @@ namespace StudentExercisesMVC.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"DELETE FROM Cohort WHERE Id=@Id";
+                        cmd.CommandText = @"UPDATE Instructor SET CohortId=5 WHERE CohortId=@Id; 
+                                            UPDATE Student SET CohortId=5 WHERE CohortId=@Id;
+                                            DELETE FROM Cohort WHERE Id=@Id";
 
+                        
                         cmd.Parameters.Add(new SqlParameter("@Id", id));
                         cmd.ExecuteNonQuery();
 

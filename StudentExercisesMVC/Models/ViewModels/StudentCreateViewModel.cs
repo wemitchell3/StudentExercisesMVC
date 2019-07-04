@@ -9,9 +9,9 @@ namespace StudentExercisesMVC.Models.ViewModels
     public class StudentCreateViewModel
     {
         public List<SelectListItem> Cohorts { get; set; }
-        public Student student { get; set; }
+        public Student Student { get; set; }
 
-        private string _connectionString;
+        private readonly string _connectionString;
 
         private SqlConnection Connection
         {
