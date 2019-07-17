@@ -17,5 +17,15 @@ namespace StudentExercisesMVC.Models.ViewModels
                     .ToList();
             }
         }
+        public List<Exercise> AvailableExercises { get; set; }
+        public List<SelectListItem> AvailableExercisesSelectList
+        {
+            get
+            {
+                return AvailableExercises
+                    .Select(c => new SelectListItem(c.ExerciseName, c.Id.ToString()))
+                    .ToList();
+            }
+        }
     }
 }

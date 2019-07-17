@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using StudentExercisesMVC.Models;
@@ -112,10 +113,12 @@ namespace StudentExercisesMVC.Controllers
         {
             Student student = GetStudentByID(id);
             List<Cohort> cohorts = GetAllCohorts();
+            List<Exercise> exercises = GetAllExercises();
             StudentEditViewModel viewModel = new StudentEditViewModel
             {
                 Student = student,
-                AvailableCohorts = cohorts
+                AvailableCohorts = cohorts,
+                AvailableExercises = exercises
             };
 
             return View(viewModel);
@@ -124,8 +127,9 @@ namespace StudentExercisesMVC.Controllers
         // POST: Students/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Student student)
+        public ActionResult Edit(int id, StudentEditViewModel viewModel)
         {
+            Student student = viewModel.Student;
             try
             {                
                 using (SqlConnection conn = Connection)
@@ -146,6 +150,17 @@ namespace StudentExercisesMVC.Controllers
                         cmd.Parameters.Add(new SqlParameter("@Id", id));
 
                         cmd.ExecuteNonQuery();
+
+                        cmd.Parameters.Clear();
+
+                        //Delete everything from that student's SE table and 
+                        cmd.CommandText = "DELETE FROM ExerciseCollection WHERE StudentId = @StudentId";
+                        cmd.Parameters.Add(new SqlParameter("@StudentId", id));
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = @"INSERT INTO ExerciseCollection (StudentId, ";
+
+                        conn.Close();
                         return RedirectToAction(nameof(Index));
                     }
                 }                
@@ -256,6 +271,38 @@ namespace StudentExercisesMVC.Controllers
                     reader.Close();
 
                     return cohorts;
+                }
+            }
+        }
+        private List<Exercise> GetAllExercises()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT 
+                                            Id,
+                                            ExerciseName,
+                                            ExerciseLanguage
+                                        FROM Exercise
+                                        ";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<Exercise> exercises = new List<Exercise>();
+                    while (reader.Read())
+                    {
+                        Exercise exercise = new Exercise
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            ExerciseName = reader.GetString(reader.GetOrdinal("ExerciseName")),
+                            ExerciseLanguage = reader.GetString(reader.GetOrdinal("ExerciseLanguage"))
+                        };
+                        exercises.Add(exercise);
+                    }
+
+                    reader.Close();
+
+                    return exercises;
                 }
             }
         }

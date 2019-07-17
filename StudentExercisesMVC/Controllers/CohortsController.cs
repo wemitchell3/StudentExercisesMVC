@@ -34,7 +34,7 @@ namespace StudentExercisesMVC.Controllers
                                         SELECT Id,
                                             CohortName
                                         FROM Cohort
-                                    ";
+                                        ";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Cohort> cohorts = new List<Cohort>();

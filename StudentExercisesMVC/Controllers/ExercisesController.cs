@@ -188,11 +188,11 @@ namespace StudentExercisesMVC.Controllers
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    Exercise student = null;
+                    Exercise exercise = null;
 
                     if (reader.Read())
                     {
-                        student = new Exercise
+                        exercise = new Exercise
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             ExerciseName = reader.GetString(reader.GetOrdinal("ExerciseName")),
@@ -201,7 +201,7 @@ namespace StudentExercisesMVC.Controllers
                     }
                     reader.Close();
 
-                    return student;
+                    return exercise;
                 }
             }
         }
